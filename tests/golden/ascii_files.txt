@@ -1,0 +1,14 @@
+<ROOT>
+|   A.txt
+|   b.txt
+|
++---alpha
+|   |   one.txt
+|   |
+|   \---sub
+|           deep.txt
+|
++---beta
+|       two.txt
+|
+\---Zeta

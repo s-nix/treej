@@ -1,0 +1,28 @@
+[package]
+name = "treej"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "A cross-platform drop-in replacement for Windows tree.com with JSON export"
+repository = "https://github.com/s-nix/treej"
+readme = "README.md"
+keywords = ["tree", "cli", "json", "directory"]
+categories = ["command-line-utilities", "filesystem"]
+build = "build.rs"
+
+[dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+
+[build-dependencies]
+embed-manifest = "1.5.1"
+
+[dev-dependencies]
+jsonschema = { version = "0.61.2", default-features = false }
+tempfile = "3.27.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

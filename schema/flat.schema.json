@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/s-nix/treej/schema/flat.schema.json",
+  "title": "treej flat output",
+  "description": "Output of `treej /J:flat` or `treej --json=flat`: one record per item, in walk order (each folder's files, then each subfolder followed by its contents). The root itself is not included.",
+  "type": "array",
+  "items": { "$ref": "#/$defs/record" },
+  "$defs": {
+    "timestamp": {
+      "description": "Last modification time, RFC 3339 in UTC, whole seconds.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "record": {
+      "type": "object",
+      "required": ["path", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "Path relative to the root, always separated by '/'.",
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^/]"
+        },
+        "type": { "enum": ["file", "folder", "symlink"] },
+        "size": {
+          "description": "Size in bytes. Files only.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "target": {
+          "description": "Where a symlink or junction points, when it can be read. Symlinks only.",
+          "type": "string"
+        },
+        "modified": { "$ref": "#/$defs/timestamp" },
+        "error": {
+          "description": "Why this item could not be read. Records for its contents are absent.",
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "file" } } },
+          "then": { "properties": { "target": false } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "folder" } } },
+          "then": { "properties": { "size": false, "target": false } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "symlink" } } },
+          "then": { "properties": { "size": false } }
+        }
+      ]
+    }
+  }
+}
