@@ -66,9 +66,16 @@ fn defaults_to_current_directory() {
         .output()
         .unwrap();
     assert!(out.status.success());
+    // The current directory is reported with symlinks resolved on Unix
+    // (on macOS the temp dir is under /var, a link to /private/var).
+    let shown = if cfg!(unix) {
+        root.canonicalize().unwrap()
+    } else {
+        root.clone()
+    };
     assert_eq!(
         String::from_utf8(out.stdout).unwrap(),
-        golden("unicode_folders.txt", &root)
+        golden("unicode_folders.txt", &shown)
     );
 }
 
